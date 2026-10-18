@@ -45,7 +45,9 @@ int setresuid(uid_t r, uid_t e, uid_t s);
 /* Drop root rights when called SUID root */
 void pa_drop_root(void) {
 
-#ifdef HAVE_GETUID
+/* Android starts this daemon under the app UID, never as SUID root.
+ * Its app seccomp policy forbids setresgid, even for the current GID. */
+#if defined(HAVE_GETUID) && !defined(__ANDROID__)
     uid_t uid;
     gid_t gid;
 
